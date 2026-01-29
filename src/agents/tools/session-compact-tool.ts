@@ -9,7 +9,11 @@ import {
 import type { MoltbotConfig } from "../../config/config.js";
 import { loadConfig } from "../../config/config.js";
 import { formatTokenCount, formatContextUsageShort } from "../../auto-reply/status.js";
-import { resolveAgentIdFromSessionKey, DEFAULT_AGENT_ID } from "../../routing/session-key.js";
+import {
+  buildAgentMainSessionKey,
+  resolveAgentIdFromSessionKey,
+  DEFAULT_AGENT_ID,
+} from "../../routing/session-key.js";
 import { resolveDefaultModelForAgent } from "../model-selection.js";
 import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import type { AnyAgentTool } from "./common.js";
@@ -50,6 +54,14 @@ function resolveSessionEntry(params: {
   if (!keyRaw.startsWith("agent:")) {
     candidates.add(`agent:${DEFAULT_AGENT_ID}:${keyRaw}`);
     candidates.add(`agent:${DEFAULT_AGENT_ID}:${internal}`);
+  }
+  if (keyRaw === "main") {
+    candidates.add(
+      buildAgentMainSessionKey({
+        agentId: DEFAULT_AGENT_ID,
+        mainKey: params.mainKey,
+      }),
+    );
   }
 
   for (const key of candidates) {
@@ -160,7 +172,7 @@ export function createSessionCompactTool(opts?: {
       }
 
       if (!resolved.entry.sessionId) {
-        throw new Error("Compaction unavailable (missing session id).");
+        throw new Error("Compaction unavailable (missing session id)");
       }
 
       const customInstructions = readStringParam(params, "instructions");
