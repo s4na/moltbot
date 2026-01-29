@@ -15,7 +15,8 @@ import {
   DEFAULT_AGENT_ID,
 } from "../../routing/session-key.js";
 import { resolveDefaultModelForAgent } from "../model-selection.js";
-import type { ThinkLevel } from "../../auto-reply/thinking.js";
+import { resolveAgentDir, resolveAgentWorkspaceDir } from "../agent-scope.js";
+import { normalizeThinkLevel } from "../../auto-reply/thinking.js";
 import type { AnyAgentTool } from "./common.js";
 import { readStringParam } from "./common.js";
 import {
@@ -180,7 +181,8 @@ export function createSessionCompactTool(opts?: {
       const provider = resolved.entry.providerOverride?.trim() || configured.provider;
       const model = resolved.entry.modelOverride?.trim() || configured.model;
       // Use session's thinking level or default to "off" for compaction
-      const thinkLevel: ThinkLevel = (resolved.entry.thinkingLevel as ThinkLevel) ?? "off";
+      // normalizeThinkLevel validates and normalizes the stored value
+      const thinkLevel = normalizeThinkLevel(resolved.entry.thinkingLevel) ?? "off";
 
       const result = await compactEmbeddedPiSession({
         sessionId: resolved.entry.sessionId,
@@ -191,12 +193,15 @@ export function createSessionCompactTool(opts?: {
         groupSpace: resolved.entry.space,
         spawnedBy: resolved.entry.spawnedBy,
         sessionFile: resolveSessionFilePath(resolved.entry.sessionId, resolved.entry),
-        workspaceDir: cfg.agents?.defaults?.workspace ?? process.cwd(),
+        workspaceDir: resolveAgentWorkspaceDir(cfg, agentId) ?? process.cwd(),
+        agentDir: resolveAgentDir(cfg, agentId),
         config: cfg,
         skillsSnapshot: resolved.entry.skillsSnapshot,
         provider,
         model,
         thinkLevel,
+        // Disable elevated bash during compaction for safety - compaction should
+        // only summarize context, not execute privileged commands
         bashElevated: {
           enabled: false,
           allowed: false,

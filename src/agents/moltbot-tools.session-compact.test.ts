@@ -36,9 +36,13 @@ vi.mock("../agents/pi-embedded.js", () => ({
   compactEmbeddedPiSession: (params: unknown) => compactEmbeddedPiSessionMock(params),
 }));
 
-vi.mock("../auto-reply/thinking.js", () => ({
-  resolveDefaultThinkingLevel: async () => "off",
-}));
+vi.mock("../auto-reply/thinking.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../auto-reply/thinking.js")>();
+  return {
+    ...actual,
+    resolveDefaultThinkingLevel: async () => "off",
+  };
+});
 
 import "./test-helpers/fast-core-tools.js";
 import { createMoltbotTools } from "./moltbot-tools.js";
