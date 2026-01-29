@@ -1,7 +1,11 @@
 import { Type } from "@sinclair/typebox";
 
 import { compactEmbeddedPiSession } from "../pi-embedded.js";
-import { resolveSessionFilePath, loadSessionStore, resolveStorePath } from "../../config/sessions.js";
+import {
+  resolveSessionFilePath,
+  loadSessionStore,
+  resolveStorePath,
+} from "../../config/sessions.js";
 import type { MoltbotConfig } from "../../config/config.js";
 import { loadConfig } from "../../config/config.js";
 import { formatTokenCount, formatContextUsageShort } from "../../auto-reply/status.js";
