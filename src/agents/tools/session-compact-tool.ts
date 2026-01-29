@@ -164,7 +164,7 @@ export function createSessionCompactTool(opts?: {
       const provider = resolved.entry.providerOverride?.trim() || configured.provider;
       const model = resolved.entry.modelOverride?.trim() || configured.model;
       // Use session's thinking level or default to "off" for compaction
-      const thinkLevel: ThinkLevel = (resolved.entry.thinkLevel as ThinkLevel) ?? "off";
+      const thinkLevel: ThinkLevel = (resolved.entry.thinkingLevel as ThinkLevel) ?? "off";
 
       const result = await compactEmbeddedPiSession({
         sessionId: resolved.entry.sessionId,
