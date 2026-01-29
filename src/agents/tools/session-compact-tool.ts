@@ -7,7 +7,7 @@ import { loadConfig } from "../../config/config.js";
 import { formatTokenCount, formatContextUsageShort } from "../../auto-reply/status.js";
 import { resolveAgentIdFromSessionKey, DEFAULT_AGENT_ID } from "../../routing/session-key.js";
 import { resolveDefaultModelForAgent } from "../model-selection.js";
-import { resolveDefaultThinkingLevel } from "../../auto-reply/thinking.js";
+import type { ThinkLevel } from "../../auto-reply/thinking.js";
 import type { AnyAgentTool } from "./common.js";
 import { readStringParam } from "./common.js";
 import {
@@ -163,11 +163,8 @@ export function createSessionCompactTool(opts?: {
       const configured = resolveDefaultModelForAgent({ cfg, agentId });
       const provider = resolved.entry.providerOverride?.trim() || configured.provider;
       const model = resolved.entry.modelOverride?.trim() || configured.model;
-      const thinkLevel = await resolveDefaultThinkingLevel({
-        cfg,
-        provider,
-        model,
-      });
+      // Use session's thinking level or default to "off" for compaction
+      const thinkLevel: ThinkLevel = (resolved.entry.thinkLevel as ThinkLevel) ?? "off";
 
       const result = await compactEmbeddedPiSession({
         sessionId: resolved.entry.sessionId,
@@ -178,7 +175,7 @@ export function createSessionCompactTool(opts?: {
         groupSpace: resolved.entry.space,
         spawnedBy: resolved.entry.spawnedBy,
         sessionFile: resolveSessionFilePath(resolved.entry.sessionId, resolved.entry),
-        workspaceDir: cfg.agents?.defaults?.workspaceDir ?? process.cwd(),
+        workspaceDir: cfg.agents?.defaults?.workspace ?? process.cwd(),
         config: cfg,
         skillsSnapshot: resolved.entry.skillsSnapshot,
         provider,
