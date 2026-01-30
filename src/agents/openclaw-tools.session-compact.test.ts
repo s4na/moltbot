@@ -41,7 +41,7 @@ vi.mock("../auto-reply/thinking.js", () => ({
 }));
 
 import "./test-helpers/fast-core-tools.js";
-import { createMoltbotTools } from "./moltbot-tools.js";
+import { createOpenClawTools } from "./openclaw-tools.js";
 
 describe("session_compact tool", () => {
   it("compacts the current session successfully", async () => {
@@ -64,7 +64,7 @@ describe("session_compact tool", () => {
       },
     });
 
-    const tool = createMoltbotTools({ agentSessionKey: "main" }).find(
+    const tool = createOpenClawTools({ agentSessionKey: "main" }).find(
       (candidate) => candidate.name === "session_compact",
     );
     expect(tool).toBeDefined();
@@ -109,7 +109,7 @@ describe("session_compact tool", () => {
       },
     });
 
-    const tool = createMoltbotTools({ agentSessionKey: "main" }).find(
+    const tool = createOpenClawTools({ agentSessionKey: "main" }).find(
       (candidate) => candidate.name === "session_compact",
     );
     expect(tool).toBeDefined();
@@ -132,7 +132,7 @@ describe("session_compact tool", () => {
       main: { sessionId: "s1", updatedAt: 10 },
     });
 
-    const tool = createMoltbotTools({ agentSessionKey: "main" }).find(
+    const tool = createOpenClawTools({ agentSessionKey: "main" }).find(
       (candidate) => candidate.name === "session_compact",
     );
     expect(tool).toBeDefined();
@@ -155,7 +155,7 @@ describe("session_compact tool", () => {
       },
     });
 
-    const tool = createMoltbotTools({ agentSessionKey: "main" }).find(
+    const tool = createOpenClawTools({ agentSessionKey: "main" }).find(
       (candidate) => candidate.name === "session_compact",
     );
     expect(tool).toBeDefined();
@@ -178,7 +178,7 @@ describe("session_compact tool", () => {
       },
     });
 
-    const tool = createMoltbotTools({ agentSessionKey: "agent:main:main" }).find(
+    const tool = createOpenClawTools({ agentSessionKey: "agent:main:main" }).find(
       (candidate) => candidate.name === "session_compact",
     );
     expect(tool).toBeDefined();
@@ -207,7 +207,7 @@ describe("session_compact tool", () => {
       reason: "API error",
     });
 
-    const tool = createMoltbotTools({ agentSessionKey: "main" }).find(
+    const tool = createOpenClawTools({ agentSessionKey: "main" }).find(
       (candidate) => candidate.name === "session_compact",
     );
     expect(tool).toBeDefined();
@@ -242,7 +242,7 @@ describe("session_compact tool", () => {
       reason: "Context too small",
     });
 
-    const tool = createMoltbotTools({ agentSessionKey: "main" }).find(
+    const tool = createOpenClawTools({ agentSessionKey: "main" }).find(
       (candidate) => candidate.name === "session_compact",
     );
     expect(tool).toBeDefined();

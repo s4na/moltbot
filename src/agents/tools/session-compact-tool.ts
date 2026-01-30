@@ -6,7 +6,7 @@ import {
   loadSessionStore,
   resolveStorePath,
 } from "../../config/sessions.js";
-import type { MoltbotConfig } from "../../config/config.js";
+import type { OpenClawConfig } from "../../config/config.js";
 import { loadConfig } from "../../config/config.js";
 import { formatTokenCount, formatContextUsageShort } from "../../auto-reply/status.js";
 import {
@@ -73,7 +73,7 @@ function resolveSessionEntry(params: {
 }
 
 function resolveSessionKeyFromSessionId(params: {
-  cfg: MoltbotConfig;
+  cfg: OpenClawConfig;
   sessionId: string;
   agentId?: string;
 }): string | null {
@@ -90,7 +90,7 @@ function resolveSessionKeyFromSessionId(params: {
 
 export function createSessionCompactTool(opts?: {
   agentSessionKey?: string;
-  config?: MoltbotConfig;
+  config?: OpenClawConfig;
 }): AnyAgentTool {
   return {
     label: "Session Compact",
