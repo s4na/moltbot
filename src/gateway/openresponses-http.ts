@@ -18,6 +18,7 @@ import { authorizeGatewayConnect, type ResolvedGatewayAuth } from "./auth.js";
 import { getBearerToken, resolveAgentIdForRequest, resolveSessionKey } from "./http-utils.js";
 import {
   readJsonBodyOrError,
+  sendInvalidRequest,
   sendJson,
   sendMethodNotAllowed,
   sendUnauthorized,
@@ -64,6 +65,21 @@ type OpenResponsesHttpOptions = {
 };
 
 const DEFAULT_BODY_BYTES = 20 * 1024 * 1024;
+
+function formatInvalidRequestMessage(err: unknown): string {
+  if (err instanceof Error) {
+    const message = err.message.trim();
+    if (message && message.length <= 200 && !message.includes("\n")) {
+      return message;
+    }
+  } else if (typeof err === "string") {
+    const message = err.trim();
+    if (message && message.length <= 200 && !message.includes("\n")) {
+      return message;
+    }
+  }
+  return "Invalid request";
+}
 
 function writeSseEvent(res: ServerResponse, event: StreamingEvent) {
   res.write(`event: ${event.type}\n`);
@@ -434,9 +450,7 @@ export async function handleOpenResponsesHttpRequest(
       }
     }
   } catch (err) {
-    sendJson(res, 400, {
-      error: { message: err instanceof Error ? err.message : "Invalid request", type: "invalid_request_error" },
-    });
+    sendInvalidRequest(res, formatInvalidRequestMessage(err));
     return true;
   }
 
@@ -451,9 +465,7 @@ export async function handleOpenResponsesHttpRequest(
     resolvedClientTools = toolChoiceResult.tools;
     toolChoicePrompt = toolChoiceResult.extraSystemPrompt;
   } catch (err) {
-    sendJson(res, 400, {
-      error: { message: err instanceof Error ? err.message : "Invalid request", type: "invalid_request_error" },
-    });
+    sendInvalidRequest(res, formatInvalidRequestMessage(err));
     return true;
   }
   const agentId = resolveAgentIdForRequest({ req, model });
